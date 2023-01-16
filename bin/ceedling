@@ -276,7 +276,7 @@ else
   end
 
   #merge in project settings if they can be found here
-  yaml_options = YAML.load_file(main_filepath)
+  yaml_options = YAML.safe_load(main_filepath, aliases: true, fallback:true)
   if (yaml_options[:paths])
     options[:add_path] = yaml_options[:paths][:tools] || []
   else
