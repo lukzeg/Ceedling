@@ -14,10 +14,10 @@ jobs:
   # Job: Unit test suite
   unit-tests:
     name: "Unit Tests"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        ruby: [2.5, 2.6, 2.7, '3.0']
+        ruby: [3.0]
     steps:
       # Install Binutils, Multilib, etc
       - name: Install C dev Tools
@@ -45,14 +45,19 @@ jobs:
       # Install Ruby Testing Tools (Bundler version should match the one in Gemfile.lock)
       - name: Install Ruby Testing Tools
         run: |
+          gem update --system
           gem install rspec
           gem install rubocop -v 0.57.2
+          gem install rake
           gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+          bundle config set --local path 'vendor/cache'
           bundle install
-
+        
       # Run Tests
       - name: Run All Self Tests
         run: |
+          ruby -v
+          bundle env
           bundle exec rake ci
 
       # Build & Install Gem

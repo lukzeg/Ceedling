@@ -1,8 +1,8 @@
 source "http://rubygems.org/"
 
-gem "bundler"
+gem "bundler", "~> 2.3.26"
 gem "rake"
-gem "rspec", "~> 3.8"
+gem "rspec", ">= 3.8"
 gem "require_all"
 gem "constructor"
 gem "diy"
