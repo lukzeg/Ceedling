@@ -5,7 +5,7 @@ require 'erb'
 class YamlWrapper
 
   def load(filepath)
-    return YAML.load(ERB.new(File.read(filepath)).result)
+    return YAML.safe_load(ERB.new(File.read(filepath)).result, [Symbol], aliases: true)
   end
 
   def dump(filepath, structure)

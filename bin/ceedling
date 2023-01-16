@@ -53,7 +53,7 @@ unless (project_found)
       as_local = true
       begin
         require "yaml"
-        as_local = (YAML.load_file(File.join(name, "project.yml"))[:project][:which_ceedling] != 'gem')
+        as_local = (YAML.safe_load(File.join(name, "project.yml"), aliases: true, fallback:false)[:project][:which_ceedling] != 'gem')
       rescue
         raise "ERROR: Could not find valid project file '#{yaml_path}'"
       end
