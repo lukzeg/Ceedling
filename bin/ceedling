@@ -51,9 +51,10 @@ unless (project_found)
     desc "upgrade PROJECT_NAME", "upgrade ceedling for a project (not req'd if gem used)"
     def upgrade(name, silent = false)
       as_local = true
+      yaml_path = File.join(name, "project.yml")
       begin
         require "yaml"
-        as_local = (YAML.safe_load(File.join(name, "project.yml"), aliases: true, fallback:false)[:project][:which_ceedling] != 'gem')
+        as_local = (YAML.safe_load(yaml_path, aliases: true, fallback:true)[:project][:which_ceedling] != 'gem')
       rescue
         raise "ERROR: Could not find valid project file '#{yaml_path}'"
       end
