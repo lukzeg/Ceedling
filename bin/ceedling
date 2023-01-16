@@ -54,7 +54,10 @@ unless (project_found)
       yaml_path = File.join(name, "project.yml")
       begin
         require "yaml"
-        as_local = (YAML.safe_load(yaml_path, aliases: true, fallback:true)[:project][:which_ceedling] != 'gem')
+        project_yaml = YAML.safe_load_file(yaml_path, permitted_classes:[Symbol], aliases: true, fallback:false)
+        if !project_yaml.empty?
+          as_local = (project_yaml[:project][:which_ceedling] != 'gem')
+        end
       rescue
         raise "ERROR: Could not find valid project file '#{yaml_path}'"
       end
@@ -276,16 +279,21 @@ else
   end
 
   #merge in project settings if they can be found here
-  yaml_options = YAML.safe_load(main_filepath, aliases: true, fallback:true)
-  if (yaml_options[:paths])
-    options[:add_path] = yaml_options[:paths][:tools] || []
-  else
-    options[:add_path] = []
-  end
-  options[:graceful_fail]  = yaml_options[:graceful_fail] if yaml_options[:graceful_fail]
-  options[:which_ceedling] = yaml_options[:project][:which_ceedling] if (yaml_options[:project] && yaml_options[:project][:which_ceedling])
-  options[:default_tasks]  = yaml_options[:default_tasks] if yaml_options[:default_tasks]
+  yaml_options = YAML.safe_load_file(main_filepath, permitted_classes:[Symbol], aliases: true, fallback:true)
+  if ![].empty?
+    if (yaml_options[:paths])
+      options[:add_path] = yaml_options[:paths][:tools] || []
+    else
+      options[:add_path] = []
+    end
+    options[:graceful_fail]  = yaml_options[:graceful_fail] if yaml_options[:graceful_fail]
+    options[:which_ceedling] = yaml_options[:project][:which_ceedling] if (yaml_options[:project] && yaml_options[:project][:which_ceedling])
+    options[:default_tasks]  = yaml_options[:default_tasks] if yaml_options[:default_tasks]
 
+    options[:graceful_fail]  = yaml_options[:graceful_fail] if yaml_options[:graceful_fail]
+    options[:which_ceedling] = yaml_options[:project][:which_ceedling] if (yaml_options[:project] && yaml_options[:project][:which_ceedling])
+    options[:default_tasks]  = yaml_options[:default_tasks] if yaml_options[:default_tasks]
+  end
   #sort through command line options
   ARGV.each do |v|
     case(v)
